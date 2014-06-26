@@ -76,10 +76,24 @@ struct _SyncTask {
     char            *tx_id;
     char            *token;
     struct CcnetTimer *commit_timer;
-    struct CcnetTimer *conn_timer;
+
+    gboolean         server_side_merge;
 
     SeafRepo        *repo;  /* for convenience, only valid when in_sync. */
 };
+
+enum {
+    SERVER_SIDE_MERGE_UNKNOWN = 0,
+    SERVER_SIDE_MERGE_SUPPORTED,
+    SERVER_SIDE_MERGE_UNSUPPORTED,
+};
+
+struct _ServerState {
+    int server_side_merge;
+    gboolean checking;
+};
+
+typedef struct _ServerState ServerState;
 
 struct _SeafileSession;
 
@@ -90,6 +104,8 @@ struct _SeafSyncManager {
     int         n_running_tasks;
     gboolean    commit_job_running;
     int         sync_interval;
+
+    GHashTable *server_states;
 
     SeafSyncManagerPriv *priv;
 };
